@@ -6,12 +6,12 @@ const Users = mongoose.model('Users');
 
 //POST new user route (optional, everyone has access)
 router.post('/', auth.optional, (req, res, next) => {
-  
+
   const { body: { user } } = req;
 
   //const user = req.body.user;
-  
-  if(!user.email) {
+
+  if (!user.email) {
     return res.status(422).json({
       errors: {
         email: 'is required',
@@ -19,7 +19,7 @@ router.post('/', auth.optional, (req, res, next) => {
     });
   }
 
-  if(!user.password) {
+  if (!user.password) {
     return res.status(422).json({
       errors: {
         password: 'is required',
@@ -32,11 +32,11 @@ router.post('/', auth.optional, (req, res, next) => {
   finalUser.setPassword(user.password);
 
   //console.log(1, finalUser);
-  
+
   return finalUser.save()
     //.then(() => console.log(2,"ok"))
     .then(() => res.json({ user: finalUser.toAuthJSON() }))
-    .catch(function(error) {
+    .catch(function (error) {
       console.log(error);
     });
 });
@@ -45,7 +45,7 @@ router.post('/', auth.optional, (req, res, next) => {
 router.post('/login', auth.optional, (req, res, next) => {
   const { body: { user } } = req;
 
-  if(!user.email) {
+  if (!user.email) {
     return res.status(422).json({
       errors: {
         email: 'is required',
@@ -53,7 +53,7 @@ router.post('/login', auth.optional, (req, res, next) => {
     });
   }
 
-  if(!user.password) {
+  if (!user.password) {
     return res.status(422).json({
       errors: {
         password: 'is required',
@@ -62,11 +62,11 @@ router.post('/login', auth.optional, (req, res, next) => {
   }
 
   return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
-    if(err) {
+    if (err) {
       return next(err);
     }
 
-    if(passportUser) {
+    if (passportUser) {
       const user = passportUser;
       user.token = passportUser.generateJWT();
 
@@ -83,11 +83,18 @@ router.get('/current', auth.required, (req, res, next) => {
 
   return Users.findById(id)
     .then((user) => {
-      if(!user) {
+      if (!user) {
         return res.sendStatus(400);
       }
 
-      return res.json({ user: user.toAuthJSON() });
+      return res.json({ user: user.json() });
+    });
+});
+
+router.get('/all', auth.optional, (req, res, next) => {
+  return Users.find()
+    .then((user) => {
+      return res.json({ user: user });
     });
 });
 
