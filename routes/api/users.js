@@ -10,7 +10,7 @@ router.post('/', auth.optional, (req, res, next) => {
   const { body: { user } } = req;
 
   //const user = req.body.user;
-
+console.log("lol")
   if (!user.email) {
     return res.status(422).json({
       errors: {
@@ -62,8 +62,10 @@ router.post('/login', auth.optional, (req, res, next) => {
   }
 
   return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
+    console.log(err)
+
     if (err) {
-      return next(err);
+      return done(null, false, { message: 'bad password' })
     }
 
     if (passportUser) {
