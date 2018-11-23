@@ -27,18 +27,28 @@ router.post('/', auth.optional, (req, res, next) => {
     });
   }
 
-  const finalUser = new Users(user);
-
-  finalUser.setPassword(user.password);
-
-  //console.log(1, finalUser);
-
-  return finalUser.save()
-    //.then(() => console.log(2,"ok"))
-    .then(() => res.json({ user: finalUser.toAuthJSON() }))
-    .catch(function (error) {
-      console.log(error);
-    });
+  Users.find({email:user.email})
+  .then((data) => {
+    if(data[0] != null){
+      return res.status(422).json({
+        errors: {
+          email: 'already exist',
+        },
+      });
+    }else{
+      console.log(user);
+      const finalUser = new Users(user);    
+      finalUser.setPassword(user.password);
+      return finalUser.save()
+      .then(() => res.json({ user: finalUser.toAuthJSON() }))
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 });
 
 //POST login route (optional, everyone has access)
@@ -73,7 +83,11 @@ router.post('/login', auth.optional, (req, res, next) => {
       return res.json({ user: user.toAuthJSON() });
     }
 
-    return res.sendStatus(403);
+    return res.status(403).json({
+      errors: {
+        user: 'invalid',
+      },
+    });
   })(req, res, next);
 });
 
