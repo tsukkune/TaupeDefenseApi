@@ -73,7 +73,7 @@ router.post('/login', auth.optional, (req, res, next) => {
       return res.json({ user: user.toAuthJSON() });
     }
 
-    return status(400).info;
+    return res.sendStatus(403);
   })(req, res, next);
 });
 
