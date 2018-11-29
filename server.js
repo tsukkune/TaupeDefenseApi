@@ -28,13 +28,14 @@ if(!isProduction) {
 }
 
 //Configure Mongoose
-var url = "mongodb://localhost/dbtaupe";
+const url = "mongodb://localhost/dbtaupe";
 
 mongoose.connect(url,{ useNewUrlParser: true });
 mongoose.set('debug', true);
 
 //Models & routes
 require('./models/Users.js');
+require('./models/Scores.js');
 require('./config/passport');
 app.use(require('./routes'));
 

@@ -3,6 +3,7 @@ const passport = require('passport');
 const router = require('express').Router();
 const auth = require('../auth');
 const Users = mongoose.model('Users');
+const Scores = mongoose.model('Scores');
 
 //POST new user route (optional, everyone has access)
 router.post('/', auth.optional, (req, res, next) => {
@@ -36,11 +37,16 @@ router.post('/', auth.optional, (req, res, next) => {
         },
       });
     }else{
-      console.log(user);
       const finalUser = new Users(user);    
       finalUser.setPassword(user.password);
       return finalUser.save()
       .then(() => res.json({ user: finalUser.toAuthJSON() }))
+      .then(() => {const firstScore = new Scores({
+        score:0,
+        Users:finalUser.toAuthJSON()._id,
+      });
+      firstScore.save();
+      })
       .catch(function (error) {
         console.log(error);
       });
@@ -100,8 +106,7 @@ router.get('/current', auth.required, (req, res, next) => {
       if (!user) {
         return res.sendStatus(400);
       }
-
-      return res.json({ user: user.json() });
+      return res.json({ user: user });
     });
 });
 
@@ -111,5 +116,21 @@ router.get('/all', auth.optional, (req, res, next) => {
       return res.json({ user: user });
     });
 });
+
+router.put('/score',auth.required, (req, res, next)=>{
+  const { payload: { id } } = req;
+  const { body: { score } } = req;
+  //console.log(score);
+
+  return Users.findById(id)
+    .then((user) => {
+      if (!user) {
+        return res.sendStatus(400);
+      }
+      
+      return Scores.findOneAndUpdate({Users:user._id},{score:score.value},{new: true})
+      .then((score)=>res.json({score:score}));
+    });
+})
 
 module.exports = router;
