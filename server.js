@@ -6,14 +6,22 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const errorHandler = require('errorhandler');
 
+
+//Initiate our app
+const app = express();
+
+const http = require('http').Server(app);
+const io = require('socket.io').listen(http);
+io.sockets.on('test',function(socket){
+  console.log('test')
+})
+
+
 //Configure mongoose's promise to global promise
 mongoose.promise = global.Promise;
 
 //Configure isProduction variable
 const isProduction = process.env.NODE_ENV === 'production';
-
-//Initiate our app
-const app = express();
 
 //Configure our app
 app.use(cors());
@@ -29,7 +37,6 @@ if(!isProduction) {
 
 //Configure Mongoose
 const url = "mongodb://localhost/dbtaupe";
-
 mongoose.connect(url,{ useNewUrlParser: true });
 mongoose.set('debug', true);
 
@@ -43,7 +50,6 @@ app.use(require('./routes'));
 if(!isProduction) {
   app.use((err, req, res, next) => {
     res.status(err.status || 500);
-
     res.json({
       errors: {
         message: err.message,
@@ -56,7 +62,6 @@ if(!isProduction) {
 if(isProduction) {
   app.use((err, req, res, next) => {
     res.status(err.status || 500);
-
     res.json({
       errors: {
         message: err.message,
