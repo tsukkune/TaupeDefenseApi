@@ -6,18 +6,10 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const errorHandler = require('errorhandler');
 const app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-
+const server = require('http').Server(app);
 
 // création d'une connection socketIo
-
-io.on('connection', function (socket) {
-  socket.on('awaitParty', function (data) {
-    console.log(data);
-  });
-});
-
+require('./socket')(server)
 
 //Configure mongoose's promise to global promise
 mongoose.promise = global.Promise;
