@@ -5,16 +5,19 @@ const session = require('express-session');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const errorHandler = require('errorhandler');
-
-
-//Initiate our app
 const app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
-const http = require('http').Server(app);
-const io = require('socket.io').listen(http);
-io.sockets.on('test',function(socket){
-  console.log('test')
-})
+
+// création d'une connection socketIo
+
+io.on('connection', function (socket) {
+  socket.emit('coucou', 'coucou du back');
+  socket.on('coucou', function (data) {
+    console.log(data);
+  });
+});
 
 
 //Configure mongoose's promise to global promise
@@ -31,13 +34,13 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'passport-tutorial', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
 
-if(!isProduction) {
+if (!isProduction) {
   app.use(errorHandler());
 }
 
 //Configure Mongoose
 const url = "mongodb://localhost/dbtaupe";
-mongoose.connect(url,{ useNewUrlParser: true });
+mongoose.connect(url, { useNewUrlParser: true });
 mongoose.set('debug', true);
 
 //Models & routes
@@ -47,7 +50,7 @@ require('./config/passport');
 app.use(require('./routes'));
 
 //Error handlers & middlewares
-if(!isProduction) {
+if (!isProduction) {
   app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
@@ -59,7 +62,7 @@ if(!isProduction) {
   });
 }
 
-if(isProduction) {
+if (isProduction) {
   app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
@@ -70,5 +73,4 @@ if(isProduction) {
     });
   });
 }
-
-app.listen(8000, () => console.log('Server running on http://localhost:8000/'));
+server.listen(8000);
