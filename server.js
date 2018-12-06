@@ -13,8 +13,7 @@ var io = require('socket.io')(server);
 // création d'une connection socketIo
 
 io.on('connection', function (socket) {
-  socket.emit('coucou', 'coucou du back');
-  socket.on('coucou', function (data) {
+  socket.on('awaitParty', function (data) {
     console.log(data);
   });
 });
