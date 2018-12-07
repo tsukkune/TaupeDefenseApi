@@ -19,6 +19,19 @@ module.exports = function (serveur) {
 
             awaitParty.addPlayer(socket)
         })
+
+        socket.on(SocketEvent.PlayerReady, function(data){
+            
+            const receiveData = JSON.parse(data);
+            playerParty = partyRoomsById[receiveData.id];
+
+            playerParty.playerReady(socket);
+
+            if(playerParty.isAllReady() || true){
+                playerParty.setLaunch();
+            }
+            
+        })
     })
 }
 

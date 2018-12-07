@@ -10,4 +10,10 @@ module.exports = {
 
     /** la partie peut commencer (creation du tableau) */
     GameReady: 'gameReady',
+
+    /** info de la partie */
+    Party: 'party',
+
+    /** un joueur est pret */
+    PlayerReady: 'playerReady,'
 }

@@ -18,4 +18,8 @@ module.exports = class Player {
         this.status = 'disconnected'
         this.partyRoom.playerDisconnected(this)
     }
+
+    setReady(){
+        this.status = 'ready'
+    }
 }
