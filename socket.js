@@ -1,6 +1,11 @@
 const SocketEvent = require("./socket-event");
 const PartyRoom = require('./partyRoom')
 
+require('./models/Users.js');
+const mongoose = require('mongoose');
+const Users = mongoose.model('Users');
+
+
 module.exports = function (serveur) {
     const io = require('socket.io').listen(serveur)
 
@@ -19,7 +24,12 @@ module.exports = function (serveur) {
                 partyRoomsById[awaitParty.id] = awaitParty
             }
 
-            awaitParty.addPlayer(socket)
+            let name = 'undefined';
+            Users.findById(data).then((user)=>{
+                name=user.email
+            }).then(()=>{
+                awaitParty.addPlayer(socket, name)
+            })
         })
 
         socket.on(SocketEvent.NextWave, function(data){

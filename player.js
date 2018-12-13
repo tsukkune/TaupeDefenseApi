@@ -1,12 +1,13 @@
 const SocketEvent = require("./socket-event");
 module.exports = class Player {
-    constructor(room, socket) {
+    constructor(room, socket, name) {
         Object.defineProperties(this, {
             socket: { value: socket, enumerable: false },
             partyRoom: { value: room, enumerable: false },
         })
 
         this.status = 'await'
+        this.name = name
 
         this.socket.player = this
         
