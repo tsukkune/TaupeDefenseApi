@@ -15,5 +15,11 @@ module.exports = {
     Party: 'party',
 
     /** un joueur est pret */
-    PlayerReady: 'playerReady'
+    PlayerReady: 'playerReady',
+
+    /**change de vague */
+    NextWave: 'nextWave',
+
+    /**le joueur a taper */
+    Hit: 'hit',
 }

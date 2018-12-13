@@ -64,6 +64,9 @@ module.exports = class PartyRoom {
 
     setLaunch() {
         this.status = 'launch'
+    }
+
+    changeWave(){
         this.wave++;
         this.grid = new Grid(this.wave);
         this.sendInfos();

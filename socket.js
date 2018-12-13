@@ -31,8 +31,21 @@ module.exports = function (serveur) {
             playerParty.playerReady(socket);
             if (playerParty.isAllReady) {
                 console.log('PLAYER ALL READY NIGGA')
-                playerParty.setLaunch(socket);
+                playerParty.setLaunch();
+                playerParty.changeWave();
             }
+        })
+
+        socket.on(SocketEvent.NextWave, function(data){
+            playerParty = partyRoomsById[data.id];
+            playerParty.changeWave();
+        })
+
+        socket.on(SocketEvent.Hit,function(data){
+            playerParty = partyRoomsById[data.id];
+            cell = data.cell;
+            playerParty.grid.checkCell(cell);
+            playerParty.sendInfos()
         })
     })
 }
