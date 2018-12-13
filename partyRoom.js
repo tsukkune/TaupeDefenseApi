@@ -18,13 +18,12 @@ module.exports = class PartyRoom {
     }
 
     addPlayer(socket) {
-        console.log('addPlayer')
         this.players.push(new Player(this, socket))
-        this.sendInfos(socket)
+        this.sendInfos()
     }
 
     get isFull() {
-        return this.players.length >= 1
+        return this.players.length >= 4
     }
 
     get isAllReady() {
@@ -37,15 +36,15 @@ module.exports = class PartyRoom {
         return partyReady;
     }
 
-    sendInfos(socket) {
-        socket.emit(SocketEvent.Party, this)
+    sendInfos() {
+        this.emit(SocketEvent.Party, this)
     }
 
     playerDisconnected(player) {
         if (this.status === 'await') {
             this.players.splice(this.players.indexOf(player), 1)
         }
-        this.sendInfos(socket)
+        this.sendInfos()
     }
 
     emit(eventName, arg) {
@@ -53,20 +52,21 @@ module.exports = class PartyRoom {
     }
 
     playerReady(socket) {
-        console.log('dans playerReady')
-        console.log(this.players)
         this.players.forEach(element => {
-            let index = this.players.indexOf(element);
-            this.players[index].setReady();
-            this.sendInfos(socket);
+            if(element.socket == socket){
+                console.log("joueur passe a ready")
+                let index = this.players.indexOf(element);
+                this.players[index].setReady();
+            }
         });
+        this.sendInfos();
     }
 
-    setLaunch(socket) {
+    setLaunch() {
         this.status = 'launch'
         this.wave++;
         this.grid = new Grid(this.wave);
-        this.sendInfos(socket);
+        this.sendInfos();
     }
 
 }
