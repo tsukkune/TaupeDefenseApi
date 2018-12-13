@@ -15,5 +15,5 @@ module.exports = {
     Party: 'party',
 
     /** un joueur est pret */
-    PlayerReady: 'playerReady,'
+    PlayerReady: 'playerReady'
 }

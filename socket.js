@@ -11,26 +11,30 @@ module.exports = function (serveur) {
     io.sockets.on('connection', function (socket) {
 
         socket.on(SocketEvent.AwaitParty, function (data) {
+            console.log('awaitServer')
+            console.log(data)
             if (awaitParty.isFull) {
                 awaitParty = new PartyRoom()
                 partyRooms.push(awaitParty)
                 partyRoomsById[awaitParty.id] = awaitParty
+
+                console.log('players dans la partie :')
             }
 
             awaitParty.addPlayer(socket)
+            console.log(partyRooms)
         })
 
-        socket.on(SocketEvent.PlayerReady, function(data){
-            
-            const receiveData = JSON.parse(data);
-            playerParty = partyRoomsById[receiveData.id];
-
+        socket.on(SocketEvent.PlayerReady, function (data) {
+            console.log('playerReady')
+            playerParty = partyRoomsById[data.id];
+            console.log(playerParty)
             playerParty.playerReady(socket);
-
-            if(playerParty.isAllReady() || true){
-                playerParty.setLaunch();
+            if (playerParty.isAllReady) {
+                console.log('PLAYER ALL READY NIGGA')
+                playerParty.setLaunch(socket);
             }
-            
+
         })
     })
 }

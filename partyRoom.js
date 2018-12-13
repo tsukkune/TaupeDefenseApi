@@ -18,55 +18,55 @@ module.exports = class PartyRoom {
     }
 
     addPlayer(socket) {
+        console.log('addPlayer')
         this.players.push(new Player(this, socket))
-        this.sendInfos()
+        this.sendInfos(socket)
     }
 
     get isFull() {
-        return this.players.length >= 4
+        return this.players.length >= 1
     }
 
-    get isAllReady(){
+    get isAllReady() {
         let partyReady = true;
         this.players.forEach(element => {
-            if(element.status != 'ready'){
+            if (element.status != 'ready') {
                 partyReady = false;
-            } 
+            }
         });
         return partyReady;
     }
 
-    sendInfos() {
-        this.emit(SocketEvent.Party, this)
+    sendInfos(socket) {
+        socket.emit(SocketEvent.Party, this)
     }
 
     playerDisconnected(player) {
         if (this.status === 'await') {
             this.players.splice(this.players.indexOf(player), 1)
         }
-        this.sendInfos()
+        this.sendInfos(socket)
     }
 
-    emit(eventName, arg) { 
+    emit(eventName, arg) {
         this.io.to(this.id).emit(eventName, arg)
     }
 
-    playerReady(socket){
+    playerReady(socket) {
+        console.log('dans playerReady')
+        console.log(this.players)
         this.players.forEach(element => {
-            if(element.socket === socket){
-                this.players.indexOf(element).setRady();
-                this.sendInfos();
-            }else{
-                this.sendInfos();
-            }
+            let index = this.players.indexOf(element);
+            this.players[index].setReady();
+            this.sendInfos(socket);
         });
     }
 
-    setLaunch(){
+    setLaunch(socket) {
         this.status = 'launch'
         this.wave++;
         this.grid = new Grid(this.wave);
-        this.sendInfos();
+        this.sendInfos(socket);
     }
 
 }
