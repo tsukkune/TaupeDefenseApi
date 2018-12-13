@@ -13,6 +13,7 @@ module.exports = function (serveur) {
     io.sockets.on('connection', function (socket) {
 
         socket.on(SocketEvent.AwaitParty, function (data) {
+            console.log(data);
             if (awaitParty.isFull) {
                 awaitParty = new PartyRoom(io)
                 partyRooms.push(awaitParty)
@@ -22,12 +23,12 @@ module.exports = function (serveur) {
             awaitParty.addPlayer(socket)
         })
 
-        socket.on(SocketEvent.NextWave, function(data){
+        socket.on(SocketEvent.NextWave, function (data) {
             playerParty = partyRoomsById[data.id];
             playerParty.changeWave();
         })
 
-        socket.on(SocketEvent.Hit,function(data){
+        socket.on(SocketEvent.Hit, function (data) {
             playerParty = partyRoomsById[data.id];
             cell = data.cell;
             playerParty.grid.checkCell(cell);
