@@ -1,3 +1,4 @@
+const SocketEvent = require("./socket-event");
 module.exports = class Player {
     constructor(room, socket) {
         Object.defineProperties(this, {
@@ -11,15 +12,21 @@ module.exports = class Player {
         
         socket.join(room.id)
 
-        socket.on('disconnect', this.disconnect.bind(this))
+        this.handleEvents()
     }
 
-    disconnect() {
+    handleEvents() {
+        this.socket.on('disconnect', this.onDisconnect.bind(this))
+        this.socket.on(SocketEvent.PlayerReady, this.onReady.bind(this))
+    }
+
+    onReady() {
+        this.status = 'ready'
+        this.partyRoom.transition()
+    }
+
+    onDisconnect() {
         this.status = 'disconnected'
         this.partyRoom.playerDisconnected(this)
-    }
-
-    setReady(){
-        this.status = 'ready'
     }
 }

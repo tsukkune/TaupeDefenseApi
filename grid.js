@@ -4,39 +4,75 @@ const WaveParameter = require("./wave-parameter");
 module.exports = class grid {
     constructor(wave) {
         Object.defineProperties(this, {
-            moleLeft: { value: WaveParameter[wave].nbTaupe, enumerable: false }
+            moleLeft: { value: WaveParameter[wave].nbTaupe, enumerable: false },
+            timer: { value: null, enumerable: false },
+            cellByCoords: { value: {}, enumerable: false }
         })
-        this.parameter=WaveParameter[wave]
-        this.cells = {}
-        this.createGrid();
+        this.params = WaveParameter[wave]
+        this.cells = []
+        this.generate();
     }
 
-    createGrid(){
-        for(let i=0;i<this.parameter.lines;i++){
-            for(let j=0;j<this.parameter.columns;j++){
-                this.cells['cell-'+i+'-'+j]={x:i,y:j,status:0}
+    generate(){
+        for(let i=0;i<this.params.lines;i++){
+            for(let j=0;j<this.params.columns;j++){
+               const cell = {x:i,y:j,status:0, statusTickCounter:0}
+               this.cellByCoords[i+','+j] = cell
+               this.cells.push(cell)
             }
         }
-
-        //populate grid
     }
 
-    checkcell(cell){
-        let selectedCell = this.cells['cell-'+cell.x+'-'+cell.y];
-        console.log('selectedCell',selectedCell)
-        switch(selectedCell.status){
+    nextRound(){
+        for(const cell of this.cells) {
+            this.checkCell(cell)
+        }
+    }
+
+    checkRandomRatio(ratio) {
+        return 0 === Math.floor(Math.random() / ratio)
+    }
+
+    get isDone() {
+        return this.moleHit >= this.params.nbMole
+    }
+
+    hitCell(x, y) {
+        const cell = this.cellByCoords[`${x},${y}`]
+        cell.status = 2
+        cell.statusTickCounter = 0;
+        this.moleHit++
+    }
+
+    checkCell(cell){
+        switch(cell.status){
             case 0:
-                console.log('trou vide');
+                if(this.checkRandomRatio(this.params.cellSpawnRatio)){
+                    cell.status = 1
+                    cell.statusTickCounter = 0
+                }
                 break;
             case 1:
-                console.log('taupe out');
-                selectedCell.status = 2;
+                if(this.checkRandomRatio(this.params.cellHideRatio)){
+                    cell.status = 0
+                    cell.statusTickCounter = 0
+                }
+                break;
+            case 2:
+                if(cell.statusTickCounter >= 2) {
+                    cell.status = 3
+                    cell.statusTickCounter = 0
+                }
                 break;
             case 3:
-                console.log('trou deja fermer (comme laurent)');
+                if(cell.statusTickCounter >= this.params.cellLockedTick) {
+                    cell.status = 0
+                    cell.statusTickCounter = 0
+                }
                 break;
             default:
                 console.log('cas inconnu')
         }
+        cell.statusTickCounter++
     }
 }

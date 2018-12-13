@@ -15,6 +15,8 @@ module.exports = class PartyRoom {
         Object.defineProperties(this, {
             io: { value: io, enumerable: false },
         })
+
+        this.tick = this.tick.bind(this)
     }
 
     addPlayer(socket) {
@@ -51,10 +53,19 @@ module.exports = class PartyRoom {
         this.io.to(this.id).emit(eventName, arg)
     }
 
+    transition() {
+        switch(this.status) {
+            case 'await': 
+                if(this.isAllReady) {
+                    this.launch()
+                }
+                break;
+        }
+    }
+
     playerReady(socket) {
         this.players.forEach(element => {
             if(element.socket == socket){
-                console.log("joueur passe a ready")
                 let index = this.players.indexOf(element);
                 this.players[index].setReady();
             }
@@ -62,14 +73,29 @@ module.exports = class PartyRoom {
         this.sendInfos();
     }
 
-    setLaunch() {
+    launch() {
         this.status = 'launch'
+        this.generateWave()
+        this.tick()
     }
 
-    changeWave(){
-        this.wave++;
+    generateWave(){
         this.grid = new Grid(this.wave);
         this.sendInfos();
+    }
+
+    tick() {
+        if(this.grid.isDone) {
+            this.wave++
+            this.generateWave()
+        }
+        this.grid.nextRound()
+        this.sendGrid()
+        setTimeout(this.tick, 500)
+    }
+
+    sendGrid() {
+        this.emit(SocketEvent.Grid, this)
     }
 
 }

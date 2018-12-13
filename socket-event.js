@@ -22,4 +22,7 @@ module.exports = {
 
     /**le joueur a taper */
     Hit: 'hit',
+
+    /**Grid */
+    Grid: 'grid',
 }
