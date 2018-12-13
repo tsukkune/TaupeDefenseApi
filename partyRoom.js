@@ -19,8 +19,8 @@ module.exports = class PartyRoom {
         this.tick = this.tick.bind(this)
     }
 
-    addPlayer(socket) {
-        this.players.push(new Player(this, socket))
+    addPlayer(socket, name) {
+        this.players.push(new Player(this, socket, name))
         this.sendInfos()
     }
 
