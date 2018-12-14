@@ -2,6 +2,7 @@ const uuid = require('uuid/v4')
 const Player = require('./player')
 const Grid = require('./grid')
 const SocketEvent = require("./socket-event");
+const waveParameter =require("./wave-parameter")
 
 module.exports = class PartyRoom {
     constructor(io) {
@@ -91,9 +92,12 @@ module.exports = class PartyRoom {
     }
 
     tick() {
-        if(this.grid.isDone) {
-            this.wave++
-            this.generateWave()
+        if(this.grid.params.wave != waveParameter.length){
+            if(this.grid.isDone) {
+                this.wave++
+                console.log('nextWave')
+                this.generateWave()
+            }
         }
         this.grid.nextRound()
         this.sendGrid()
@@ -111,10 +115,3 @@ module.exports = class PartyRoom {
     }
 
 }
-
-// socket.on(SocketEvent.Hit, function (data) {
-//     playerParty = partyRoomsById[data.id];
-//     cell = data.cell;
-//     //playerParty.grid.checkCell(cell);
-//     playerParty.sendInfos()
-// })

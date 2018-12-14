@@ -18,7 +18,6 @@ module.exports = function (serveur) {
     io.sockets.on('connection', function (socket) {
 
         socket.on(SocketEvent.AwaitParty, function (data) {
-            console.log(data);
 
             let name = 'undefined';
             Users.findById(data).then((user)=> {

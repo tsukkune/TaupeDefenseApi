@@ -9,6 +9,7 @@ module.exports = class grid {
             timer: { value: null, enumerable: false },
             cellByCoords: { value: {}, enumerable: false }
         })
+        this.moleHit = 0
         this.params = WaveParameter[wave]
         this.cells = []
         this.generate();
@@ -39,10 +40,8 @@ module.exports = class grid {
     }
 
     hitCell(x, y) {
-        console.log('hitCell', x,' ', y)
         const cell = this.cellByCoords[`${x},${y}`]
         if(cell.status !== cellStatus.MoleOut) return false
-        console.log('moleHit')
         cell.status = cellStatus.MoleDown
         cell.statusTickCounter = 0;
         this.moleHit++
@@ -64,7 +63,7 @@ module.exports = class grid {
                 }
                 break;
             case cellStatus.MoleDown:
-                if(cell.statusTickCounter >= 2) {
+                if(cell.statusTickCounter >= this.params.cellMoleDownTick) {
                     cell.status = cellStatus.LockedHole
                     cell.statusTickCounter = 0
                 }
