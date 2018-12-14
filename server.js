@@ -6,10 +6,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const errorHandler = require('errorhandler');
 const app = express();
-const server = require('http').Server(app);
+const server = require('http').createServer(app);
 
 // création d'une connection socketIo
-require('./socket')(server)
 
 //Configure mongoose's promise to global promise
 mongoose.promise = global.Promise;
@@ -18,7 +17,10 @@ mongoose.promise = global.Promise;
 const isProduction = process.env.NODE_ENV === 'production';
 
 //Configure our app
-app.use(cors());
+app.use(cors({origin: true}));
+
+require('./socket')(server)
+
 app.use(require('morgan')('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

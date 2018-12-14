@@ -5,7 +5,6 @@ const cellStatus = require("./cell-status");
 module.exports = class grid {
     constructor(wave) {
         Object.defineProperties(this, {
-            moleLeft: { value: WaveParameter[wave].nbTaupe, enumerable: false },
             timer: { value: null, enumerable: false },
             cellByCoords: { value: {}, enumerable: false }
         })
@@ -42,6 +41,7 @@ module.exports = class grid {
     hitCell(x, y) {
         const cell = this.cellByCoords[`${x},${y}`]
         if(cell.status !== cellStatus.MoleOut) return false
+        
         cell.status = cellStatus.MoleDown
         cell.statusTickCounter = 0;
         this.moleHit++
@@ -55,6 +55,7 @@ module.exports = class grid {
                     cell.status = cellStatus.MoleOut
                     cell.statusTickCounter = 0
                 }
+                
                 break;
             case cellStatus.MoleOut:
                 if(this.checkRandomRatio(this.params.cellHideRatio)){

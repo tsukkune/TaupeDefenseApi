@@ -7,7 +7,8 @@ const Users = mongoose.model('Users');
 
 
 module.exports = function (serveur) {
-    const io = require('socket.io').listen(serveur)
+    const io = require('socket.io')(serveur)
+    io.origins('http://localhost:3000')
 
     const partyRooms = []
     const partyRoomsById = {}

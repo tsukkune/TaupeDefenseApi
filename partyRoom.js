@@ -15,6 +15,7 @@ module.exports = class PartyRoom {
 
         Object.defineProperties(this, {
             io: { value: io, enumerable: false },
+            tickStep: { value: 0, enumerable: false, writable: true },
         })
 
         this.tick = this.tick.bind(this)
@@ -56,8 +57,12 @@ module.exports = class PartyRoom {
         this.sendInfos()
     }
 
-    emit(eventName, arg) {
-        this.io.to(this.id).emit(eventName, arg)
+    emit(eventName, arg, broadcast) {
+        if(broadcast) {
+            this.io.to(this.id).broadcast(eventName, arg)
+        } else {
+            this.io.to(this.id).emit(eventName, arg)
+        }
     }
 
     transition() {
@@ -92,26 +97,39 @@ module.exports = class PartyRoom {
     }
 
     tick() {
-        if(this.grid.params.wave != waveParameter.length){
+        if(!(this.tickStep % 5)) { // every 5 ticks
             if(this.grid.isDone) {
                 this.wave++
-                console.log('nextWave')
                 this.generateWave()
             }
+            this.grid.nextRound()
+            this.sendGrid()
         }
-        this.grid.nextRound()
-        this.sendGrid()
-        setTimeout(this.tick, 500)
+
+        this.sendHammers()
+
+        this.tickStep++
+        if(this.tickStep > 100) this.tickStep = 0
+        setTimeout(this.tick, 100)
     }
 
     sendGrid() {
         this.emit(SocketEvent.Grid, this)
     }
 
+    sendHammers() {
+        this.emit('hammers', this.players.map(p => p.hammer))
+    }
+
     onHit(player, x, y){
         if(this.grid.hitCell(x,y)){   
-            //update du score
+            player.hammer.s = 1
+            setTimeout(() => player.hammer.s = 0, 500)
+            
+            player.score += 10
+            this.emit('TaupeHit',{x,y, score:10})
         }
     }
 
+    
 }
