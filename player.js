@@ -10,7 +10,7 @@ module.exports = class Player {
         this.name = name
 
         this.socket.player = this
-        
+
         socket.join(room.id)
 
         this.handleEvents()
