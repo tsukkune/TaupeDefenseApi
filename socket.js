@@ -19,15 +19,14 @@ module.exports = function (serveur) {
     io.sockets.on('connection', function (socket) {
 
         socket.on(SocketEvent.AwaitParty, function (data) {
-
+            console.log(data);
             let name = 'undefined';
-            Users.findById(data).then((user)=> {
+            Users.findById(data).then((user) => {
                 if (awaitParty.isFull) {
                     awaitParty = new PartyRoom(io)
                     partyRooms.push(awaitParty)
                     partyRoomsById[awaitParty.id] = awaitParty
                 }
-
                 awaitParty.addPlayer(socket, user.email)
             })
         })
