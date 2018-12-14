@@ -19,30 +19,17 @@ module.exports = function (serveur) {
 
         socket.on(SocketEvent.AwaitParty, function (data) {
             console.log(data);
-            if (awaitParty.isFull) {
-                awaitParty = new PartyRoom(io)
-                partyRooms.push(awaitParty)
-                partyRoomsById[awaitParty.id] = awaitParty
-            }
 
             let name = 'undefined';
-            Users.findById(data).then((user)=>{
-                name=user.email
-            }).then(()=>{
-                awaitParty.addPlayer(socket, name)
+            Users.findById(data).then((user)=> {
+                if (awaitParty.isFull) {
+                    awaitParty = new PartyRoom(io)
+                    partyRooms.push(awaitParty)
+                    partyRoomsById[awaitParty.id] = awaitParty
+                }
+
+                awaitParty.addPlayer(socket, user.email)
             })
-        })
-
-        socket.on(SocketEvent.NextWave, function (data) {
-            playerParty = partyRoomsById[data.id];
-            playerParty.changeWave();
-        })
-
-        socket.on(SocketEvent.Hit, function (data) {
-            playerParty = partyRoomsById[data.id];
-            cell = data.cell;
-            playerParty.grid.checkCell(cell);
-            playerParty.sendInfos()
         })
     })
 }

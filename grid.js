@@ -1,5 +1,6 @@
 
 const WaveParameter = require("./wave-parameter");
+const cellStatus = require("./cell-status");
 
 module.exports = class grid {
     constructor(wave) {
@@ -16,7 +17,7 @@ module.exports = class grid {
     generate(){
         for(let i=0;i<this.params.lines;i++){
             for(let j=0;j<this.params.columns;j++){
-               const cell = {x:i,y:j,status:0, statusTickCounter:0}
+               const cell = {x:i,y:j,status:cellStatus.VoidHole, statusTickCounter:0}
                this.cellByCoords[i+','+j] = cell
                this.cells.push(cell)
             }
@@ -38,35 +39,39 @@ module.exports = class grid {
     }
 
     hitCell(x, y) {
+        console.log('hitCell', x,' ', y)
         const cell = this.cellByCoords[`${x},${y}`]
-        cell.status = 2
+        if(cell.status !== cellStatus.MoleOut) return false
+        console.log('moleHit')
+        cell.status = cellStatus.MoleDown
         cell.statusTickCounter = 0;
         this.moleHit++
+        return true
     }
 
     checkCell(cell){
         switch(cell.status){
-            case 0:
+            case cellStatus.VoidHole:
                 if(this.checkRandomRatio(this.params.cellSpawnRatio)){
-                    cell.status = 1
+                    cell.status = cellStatus.MoleOut
                     cell.statusTickCounter = 0
                 }
                 break;
-            case 1:
+            case cellStatus.MoleOut:
                 if(this.checkRandomRatio(this.params.cellHideRatio)){
-                    cell.status = 0
+                    cell.status = cellStatus.VoidHole
                     cell.statusTickCounter = 0
                 }
                 break;
-            case 2:
+            case cellStatus.MoleDown:
                 if(cell.statusTickCounter >= 2) {
-                    cell.status = 3
+                    cell.status = cellStatus.LockedHole
                     cell.statusTickCounter = 0
                 }
                 break;
-            case 3:
+            case cellStatus.LockedHole:
                 if(cell.statusTickCounter >= this.params.cellLockedTick) {
-                    cell.status = 0
+                    cell.status = cellStatus.VoidHole
                     cell.statusTickCounter = 0
                 }
                 break;

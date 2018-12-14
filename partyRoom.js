@@ -20,8 +20,14 @@ module.exports = class PartyRoom {
     }
 
     addPlayer(socket, name) {
-        this.players.push(new Player(this, socket, name))
+        const player = new Player(this, socket, name)
+        this.players.push(player)
         this.sendInfos()
+        this.handlePlayerEvents(player)
+    }
+
+    handlePlayerEvents(player){
+        player.socket.on(SocketEvent.Hit, (x, y) => this.onHit(player, x, y))
     }
 
     get isFull() {
@@ -98,4 +104,17 @@ module.exports = class PartyRoom {
         this.emit(SocketEvent.Grid, this)
     }
 
+    onHit(player, x, y){
+        if(this.grid.hitCell(x,y)){   
+            //update du score
+        }
+    }
+
 }
+
+// socket.on(SocketEvent.Hit, function (data) {
+//     playerParty = partyRoomsById[data.id];
+//     cell = data.cell;
+//     //playerParty.grid.checkCell(cell);
+//     playerParty.sendInfos()
+// })
