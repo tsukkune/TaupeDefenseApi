@@ -33,7 +33,7 @@ module.exports = class PartyRoom {
     }
 
     get isFull() {
-        return this.players.length >= 4
+        return (this.players.length >= 4 || this.status != 'await')
     }
 
     get isAllReady() {
@@ -97,20 +97,25 @@ module.exports = class PartyRoom {
     }
 
     tick() {
-        if(!(this.tickStep % 5)) { // every 5 ticks
-            if(this.grid.isDone) {
-                this.wave++
-                this.generateWave()
+        if((this.wave === this.waveParameter.length-1)&& this.grid.isDone){   
+            if(!(this.tickStep % 5)) { // every 5 ticks
+                if(this.grid.isDone) {
+                    this.wave++
+                    this.generateWave()
+                }
+                this.grid.nextRound()
+                this.sendGrid()
             }
-            this.grid.nextRound()
-            this.sendGrid()
+
+            this.sendHammers()
+
+            this.tickStep++
+            if(this.tickStep > 100) this.tickStep = 0
+            setTimeout(this.tick, 100)
+        }else{
+            this.status = 'finish'
+            this.sendInfos()
         }
-
-        this.sendHammers()
-
-        this.tickStep++
-        if(this.tickStep > 100) this.tickStep = 0
-        setTimeout(this.tick, 100)
     }
 
     sendGrid() {
