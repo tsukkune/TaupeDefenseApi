@@ -2,7 +2,7 @@ const uuid = require('uuid/v4')
 const Player = require('./player')
 const Grid = require('./grid')
 const SocketEvent = require("./socket-event");
-const waveParameter =require("./wave-parameter")
+const waveParameter = require("./wave-parameter")
 
 module.exports = class PartyRoom {
     constructor(io) {
@@ -28,7 +28,7 @@ module.exports = class PartyRoom {
         this.handlePlayerEvents(player)
     }
 
-    handlePlayerEvents(player){
+    handlePlayerEvents(player) {
         player.socket.on(SocketEvent.Hit, (x, y) => this.onHit(player, x, y))
     }
 
@@ -58,7 +58,7 @@ module.exports = class PartyRoom {
     }
 
     emit(eventName, arg, broadcast) {
-        if(broadcast) {
+        if (broadcast) {
             this.io.to(this.id).broadcast(eventName, arg)
         } else {
             this.io.to(this.id).emit(eventName, arg)
@@ -66,9 +66,9 @@ module.exports = class PartyRoom {
     }
 
     transition() {
-        switch(this.status) {
-            case 'await': 
-                if(this.isAllReady) {
+        switch (this.status) {
+            case 'await':
+                if (this.isAllReady) {
                     this.launch()
                 }
                 break;
@@ -77,7 +77,7 @@ module.exports = class PartyRoom {
 
     playerReady(socket) {
         this.players.forEach(element => {
-            if(element.socket == socket){
+            if (element.socket == socket) {
                 let index = this.players.indexOf(element);
                 this.players[index].setReady();
             }
@@ -91,7 +91,7 @@ module.exports = class PartyRoom {
         this.tick()
     }
 
-    generateWave(){
+    generateWave() {
         this.grid = new Grid(this.wave);
         this.sendInfos();
     }
@@ -113,9 +113,9 @@ module.exports = class PartyRoom {
             if(this.tickStep > 100) this.tickStep = 0
             setTimeout(this.tick, 100)
         }else{
-            this.status = 'finish'
             this.sendInfos()
         }
+            this.status = 'finish'
     }
 
     sendGrid() {
@@ -126,15 +126,15 @@ module.exports = class PartyRoom {
         this.emit('hammers', this.players.map(p => p.hammer))
     }
 
-    onHit(player, x, y){
-        if(this.grid.hitCell(x,y)){   
+    onHit(player, x, y) {
+        if (this.grid.hitCell(x, y)) {
             player.hammer.s = 1
             setTimeout(() => player.hammer.s = 0, 500)
-            
+
             player.score += 10
-            this.emit('TaupeHit',{x,y, score:10})
+            this.emit('TaupeHit', { x, y, score: 10 })
         }
     }
 
-    
+
 }

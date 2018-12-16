@@ -35,8 +35,10 @@ module.exports = class Player {
         this.partyRoom.playerDisconnected(this)
     }
 
-    onMouse(x, y){
-        this.x = x;
-        this.y = y;
+
+    onMouse(x, y, s) {
+        this.hammer.x = x;
+        this.hammer.y = y;
+        this.hammer.s = s;
     }
 }
