@@ -97,25 +97,20 @@ module.exports = class PartyRoom {
     }
 
     tick() {
-        if((this.wave === this.waveParameter.length-1)&& this.grid.isDone){   
-            if(!(this.tickStep % 5)) { // every 5 ticks
-                if(this.grid.isDone) {
-                    this.wave++
-                    this.generateWave()
-                }
-                this.grid.nextRound()
-                this.sendGrid()
+        if(!(this.tickStep % 5)) { // every 5 ticks
+            if(this.grid.isDone) {
+                this.wave++
+                this.generateWave()
             }
-
-            this.sendHammers()
-
-            this.tickStep++
-            if(this.tickStep > 100) this.tickStep = 0
-            setTimeout(this.tick, 100)
-        }else{
-            this.sendInfos()
+            this.grid.nextRound()
+            this.sendGrid()
         }
-            this.status = 'finish'
+
+        this.sendHammers()
+
+        this.tickStep++
+        if(this.tickStep > 100) this.tickStep = 0
+        setTimeout(this.tick, 100)
     }
 
     sendGrid() {
