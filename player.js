@@ -8,7 +8,11 @@ module.exports = class Player {
         })
 
         this.status = 'await'
-        this.name = name
+
+        let temp=name.split('@');
+
+
+        this.name = temp[0];
         this.score = 0
 
 
