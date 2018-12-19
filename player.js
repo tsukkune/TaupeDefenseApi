@@ -1,4 +1,5 @@
 const SocketEvent = require("./socket-event");
+const gravatar = require('gravatar-api');
 module.exports = class Player {
     constructor(room, socket, name) {
         Object.defineProperties(this, {
@@ -11,10 +12,13 @@ module.exports = class Player {
 
         let temp=name.split('@');
 
-
         this.name = temp[0];
-        this.score = 0
+        this.score = 0;
 
+        let options = {
+            email: this.name
+        }
+        this.avatar = gravatar.imageUrl(options);
 
         this.socket.player = this
 
