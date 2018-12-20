@@ -44,9 +44,9 @@ module.exports = class Player {
     }
 
 
-    onMouse(x, y, s) {
+    onMouse(x, y, id) {
         this.hammer.x = x;
         this.hammer.y = y;
-        this.hammer.s = s;
+        this.hammer.id = id;
     }
 }
