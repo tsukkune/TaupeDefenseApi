@@ -119,7 +119,7 @@ module.exports = class PartyRoom {
     }
 
     sendHammers() {
-        this.emit(SocketEvent.hammers, this.players.map(p => p.hammer))
+        this.emit(SocketEvent.Hammers, this.players.map(p => p.hammer))
     }
 
     onHit(player, x, y) {
