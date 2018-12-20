@@ -120,7 +120,6 @@ router.get('/all', auth.optional, (req, res, next) => {
 router.put('/score',auth.required, (req, res, next)=>{
   const { payload: { id } } = req;
   const { body: { score } } = req;
-  //console.log(score);
 
   return Users.findById(id)
     .then((user) => {
