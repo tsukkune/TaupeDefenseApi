@@ -22,5 +22,5 @@ module.exports = [
 
     { lines: 13, columns: 13, nbMole: 25, cellSpawnRatio: 0.2, cellHideRatio: 0.2, cellLockedTick: 10, cellMoleDownTick: 5 },
 
-    { lines: 14, columns: 14, nbMole: 25, cellSpawnRatio: 0.2, cellHideRatio: 0.2, cellLockedTick: 10, cellMoleDownTick: 5 },
+    { lines: 14, columns: 14, nbMole: 9999999, cellSpawnRatio: 0.2, cellHideRatio: 0.2, cellLockedTick: 10, cellMoleDownTick: 5 },
 ]
