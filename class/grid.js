@@ -1,6 +1,6 @@
 
-const WaveParameter = require("./wave-parameter");
-const cellStatus = require("./cell-status");
+const WaveParameter = require("../config/wave-parameter");
+const cellStatus = require("../config/cell-status");
 
 module.exports = class grid {
     constructor(wave) {

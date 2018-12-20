@@ -1,8 +1,8 @@
 const uuid = require('uuid/v4')
 const Player = require('./player')
 const Grid = require('./grid')
-const SocketEvent = require("./socket-event");
-const waveParameter = require("./wave-parameter")
+const SocketEvent = require("../config/socket-event");
+const waveParameter = require("../config/wave-parameter")
 
 module.exports = class PartyRoom {
     constructor(io) {
@@ -98,6 +98,7 @@ module.exports = class PartyRoom {
 
     tick() {
         if(!(this.tickStep % 5)) { // every 5 ticks
+            //console.log(waveParameter.length)
             if(this.grid.isDone) {
                 this.wave++
                 this.generateWave()
@@ -118,16 +119,16 @@ module.exports = class PartyRoom {
     }
 
     sendHammers() {
-        this.emit('hammers', this.players.map(p => p.hammer))
+        this.emit(SocketEvent.hammers, this.players.map(p => p.hammer))
     }
 
     onHit(player, x, y) {
         if (this.grid.hitCell(x, y)) {
-            player.hammer.s = 1
-            setTimeout(() => player.hammer.s = 0, 500)
+            // player.hammer.s = 1
+            // setTimeout(() => player.Hammer.s = 0, 500)
 
             player.score += 10
-            this.emit('TaupeHit', { x, y, score: 10 })
+            this.emit(SocketEvent.TaupeHit, { x, y, score: 10 })
         }
     }
 
