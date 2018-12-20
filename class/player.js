@@ -1,4 +1,4 @@
-const SocketEvent = require("./socket-event");
+const SocketEvent = require("../config/socket-event");
 const gravatar = require('gravatar-api');
 module.exports = class Player {
     constructor(room, socket, name) {

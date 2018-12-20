@@ -25,4 +25,8 @@ module.exports = {
 
     /**Grid */
     Grid: 'grid',
+
+    Hammers: 'hammers',
+
+    TaupeHit: 'TaupeHit',
 }

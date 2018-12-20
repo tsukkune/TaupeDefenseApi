@@ -1,5 +1,5 @@
-const SocketEvent = require("./socket-event");
-const PartyRoom = require('./partyRoom')
+const SocketEvent = require("./config/socket-event");
+const PartyRoom = require('./class/partyRoom')
 
 require('./models/Users.js');
 const mongoose = require('mongoose');
